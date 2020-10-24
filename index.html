@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
+</head>
+
+<body style="background-image: url( 'home-header-banner-bg.png');background-repeat: no-repeat; background-attachment: fixed; background-size: cover;">
+
+    <div class="container">
+        <div style="width:500px; margin-left:auto; margin-right:auto; margin-top:150px; text-align: center;">
+            <h1 class="mb-4">Github Code Test</h1>
+            <input class="form-control form-control-lg form-control-borderless mb-4" type="text" name="searchTopic" placeholder="Topic.. eg:Ruby" id="searchTopic">
+            <input class=" form-control form-control-lg form-control-borderless mb-4" type="text" name="searchLanguage" placeholder="Language.. eg:html" id="searchLanguage">
+            <button class="btn btn-primary btn-block" id='btnRepos'>Search Repository</button>
+            <div id='divResult1' class="mt-4"></div>
+            <div id='divResult2' class="mt-2"></div>
+            <div id='divResult3' class="mt-2"></div>
+            <div id='divResult4' class="mt-2"></div>
+            <div id='divResult5' class="mt-2"></div>
+            <button class="btn btn-info mt-3 mb-3" id="btnFirst" style="visibility:hidden;">First</button>
+            <button class="btn btn-info mt-3 mb-3" id="btnPrevious" style="visibility:hidden;">Previous</button>
+            <button class="btn btn-info mt-3 mb-3" id="btnNext" style="visibility:hidden;">Next</button>
+            <button class="btn btn-info mt-3 mb-3" id="btnLast" style="visibility:hidden;">Last</button>
+        </div>
+
+
+    </div>
+    <div footer>
+        <img src="home-truck-left.png">
+    </div>
+    <script>
+        const btnRepos = document.getElementById("btnRepos")
+        const divResult1 = document.getElementById("divResult1")
+        const divResult2 = document.getElementById("divResult2")
+        const divResult3 = document.getElementById("divResult3")
+        const divResult4 = document.getElementById("divResult4")
+        const divResult5 = document.getElementById("divResult5")
+        const btnFirst = document.getElementById("btnFirst")
+        const btnNext = document.getElementById("btnNext")
+        const btnPrevious = document.getElementById("btnPrevious")
+        const btnLast = document.getElementById("btnLast")
+
+        var arrayResult = []
+        var arrayResult2 = []
+
+        var currentPage = 1
+        var resultPerPage = 5
+        var skip = 0
+        var totalCount = 0
+        var totalPage = 0
+
+        btnRepos.addEventListener("click", getRepos)
+        btnFirst.addEventListener("click", First)
+        btnPrevious.addEventListener("click", Previous)
+        btnNext.addEventListener("click", Next)
+        btnLast.addEventListener("click", Last)
+
+        async function getRepos() {
+
+            arrayResult = []
+            arrayResult2 = []
+            clear()
+            const topic = document.getElementById("searchTopic").value
+            const language = document.getElementById("searchLanguage").value
+            var url
+
+            if (topic) {
+                if (language) {
+                    url = "https://api.github.com/search/repositories?q=topic:" + topic + "+language:" + language
+                } else {
+                    url = "https://api.github.com/search/repositories?q=topic:" + topic
+                }
+            } else {
+                url = "https://api.github.com/search/repositories?q=language:" + language
+            }
+
+            const response = await fetch(url)
+            const result = await response.json()
+
+            result.items.forEach(item => {
+                // const anchor = document.createElement("a")
+                // anchor.href = item.html_url
+                // anchor.textContent = item.full_name
+                arrayResult.push(item.html_url)
+                arrayResult2.push(item.full_name)
+            })
+            showResult()
+            btnFirst.style.visibility = "visible"
+            btnNext.style.visibility = "visible"
+            btnPrevious.style.visibility = "visible"
+            btnLast.style.visibility = "visible"
+        }
+
+        function clear() {
+            while (divResult1.firstChild)
+                divResult1.removeChild(divResult1.firstChild)
+            while (divResult2.firstChild)
+                divResult2.removeChild(divResult2.firstChild)
+            while (divResult3.firstChild)
+                divResult3.removeChild(divResult3.firstChild)
+            while (divResult4.firstChild)
+                divResult4.removeChild(divResult4.firstChild)
+            while (divResult5.firstChild)
+                divResult5.removeChild(divResult5.firstChild)
+        }
+
+        function showResult() {
+            totalCount = arrayResult.length
+            totalPage = totalCount / resultPerPage
+            var resultLong = arrayResult.slice(skip, skip + resultPerPage)
+            var resultName = arrayResult2.slice(skip, skip + resultPerPage)
+
+            document.getElementById("divResult1").innerHTML = "<a href=" + resultLong[0] + ">" + resultName[0] + "</a>"
+            document.getElementById("divResult2").innerHTML = "<a href=" + resultLong[1] + ">" + resultName[1] + "</a>"
+            document.getElementById("divResult3").innerHTML = "<a href=" + resultLong[2] + ">" + resultName[2] + "</a>"
+            document.getElementById("divResult4").innerHTML = "<a href=" + resultLong[3] + ">" + resultName[3] + "</a>"
+            document.getElementById("divResult5").innerHTML = "<a href=" + resultLong[4] + ">" + resultName[4] + "</a>"
+        }
+
+        function First() {
+            currentPage = 1
+            skip = 0
+            showResult()
+        }
+
+        function Next() {
+            if (currentPage < totalPage) currentPage++
+                skip = resultPerPage * (currentPage - 1)
+            showResult()
+        }
+
+        function Previous() {
+            if (currentPage > 1) currentPage--
+                skip = resultPerPage * (currentPage - 1)
+            showResult()
+        }
+
+        function Last() {
+            currentPage = totalPage
+            skip = resultPerPage * (currentPage - 1)
+            showResult()
+        }
+    </script>
+</body>
+
+</html>
