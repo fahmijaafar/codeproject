@@ -2,11 +2,19 @@
 <html lang="en">
 
 <head>
+    <style>
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 400px;
+            }
+        }
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
 </head>
+
 
 <body style="background-image: url( 'home-header-banner-bg.png');background-repeat: no-repeat; background-attachment: fixed; background-size: cover;">
 
@@ -50,9 +58,6 @@
         var arrayResult = []
         var arrayResult2 = []
 
-        var searchedTopic = []
-        var searchedLanguage = []
-        var rowWidth = 40;
         var content = "";
 
         var currentPage = 1
@@ -80,26 +85,30 @@
             if (topic) {
                 if (language) {
                     url = "https://api.github.com/search/repositories?q=topic:" + topic + "+language:" + language
-                    searchedTopic.push(topic)
-                    searchedLanguage.push(language)
+                    content += "Searched Topic" + "\n"
+                    content += topic + "\n"
+                    content += "Searched Language" + "\n"
+                    content += language + "\n"
+
                 } else {
                     url = "https://api.github.com/search/repositories?q=topic:" + topic
-                    searchedTopic.push(topic)
+                    content += "Searched Topic" + "\n"
+                    content += topic + "\n"
                 }
             } else {
                 url = "https://api.github.com/search/repositories?q=language:" + language
-                searchedLanguage.push(language)
+
+                content += "Searched Language" + "\n"
+                content += language + "\n"
             }
 
             const response = await fetch(url)
             const result = await response.json()
 
             result.items.forEach(item => {
-                // const anchor = document.createElement("a")
-                // anchor.href = item.html_url
-                // anchor.textContent = item.full_name
                 arrayResult.push(item.html_url)
                 arrayResult2.push(item.full_name)
+                content += item.html_url + "\n"
             })
             showResult()
             btnFirst.style.visibility = "visible"
@@ -159,20 +168,6 @@
         }
 
         function Export() {
-
-            var content = "";
-            content += "Searched Topic" + "\n";
-
-            for (var i = 0; i < searchedTopic.length; i += 1) {
-                content += searchedTopic[i];
-                content += "\n";
-            }
-            content += "Searched Language" + "\n";
-
-            for (var j = 0; j < searchedLanguage.length; j += 1) {
-                content += searchedLanguage[j];
-                content += "\n";
-            }
 
             uri = "data:application/octet-stream," + encodeURIComponent(content);
 
