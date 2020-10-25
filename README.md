@@ -4,11 +4,11 @@ HOW TO INSTALL AND RUN
 
 1. Download the files and open using any web browser(Please! dont use mobile).
 2. insert topic and/or language in their respective input box to start searching the repositories.
-3. I've also included the file on my website at https://fahmijaafar.com/github (with some surprise) to save your time.
+3. I've also included the file on my website at https://fahmijaafar.com/github to save your time.
 
 COMPROMISES
 
-- I've decided not to include admin report for the test, due to time contraint.
+- I've decided to include simple admin report for the test which is only for front end, due to time contraint.
 But, I may be able to explain on how I'd probably done it.
 1. create dependencies to mySQL, add a log table
 2. for every button clicking on the search, php script will run POST method of the input and store in the database.
