@@ -29,8 +29,10 @@
 
 
     </div>
-    <div footer>
-        <img src="home-truck-left.png">
+    <div footer style="position: fixed;left: 0;
+    bottom: 0;
+    width: 100%;text-align: right;">
+        <button class="btn btn-danger mr-3 mb-3" id="btnAdmin">Export Search</button>
     </div>
     <script>
         const btnRepos = document.getElementById("btnRepos")
@@ -43,9 +45,15 @@
         const btnNext = document.getElementById("btnNext")
         const btnPrevious = document.getElementById("btnPrevious")
         const btnLast = document.getElementById("btnLast")
+        const btnAdmin = document.getElementById("btnAdmin")
 
         var arrayResult = []
         var arrayResult2 = []
+
+        var searchedTopic = []
+        var searchedLanguage = []
+        var rowWidth = 40;
+        var content = "";
 
         var currentPage = 1
         var resultPerPage = 5
@@ -58,6 +66,7 @@
         btnPrevious.addEventListener("click", Previous)
         btnNext.addEventListener("click", Next)
         btnLast.addEventListener("click", Last)
+        btnAdmin.addEventListener("click", Export)
 
         async function getRepos() {
 
@@ -71,11 +80,15 @@
             if (topic) {
                 if (language) {
                     url = "https://api.github.com/search/repositories?q=topic:" + topic + "+language:" + language
+                    searchedTopic.push(topic)
+                    searchedLanguage.push(language)
                 } else {
                     url = "https://api.github.com/search/repositories?q=topic:" + topic
+                    searchedTopic.push(topic)
                 }
             } else {
                 url = "https://api.github.com/search/repositories?q=language:" + language
+                searchedLanguage.push(language)
             }
 
             const response = await fetch(url)
@@ -143,6 +156,27 @@
             currentPage = totalPage
             skip = resultPerPage * (currentPage - 1)
             showResult()
+        }
+
+        function Export() {
+
+            var content = "";
+            content += "Searched Topic" + "\n";
+
+            for (var i = 0; i < searchedTopic.length; i += 1) {
+                content += searchedTopic[i];
+                content += "\n";
+            }
+            content += "Searched Language" + "\n";
+
+            for (var j = 0; j < searchedLanguage.length; j += 1) {
+                content += searchedLanguage[j];
+                content += "\n";
+            }
+
+            uri = "data:application/octet-stream," + encodeURIComponent(content);
+
+            location.href = uri;
         }
     </script>
 </body>
